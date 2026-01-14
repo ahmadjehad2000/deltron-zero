@@ -1,0 +1,68 @@
+---
+layout: terminal
+title: "SEARCH DATABASE"
+---
+
+<div class="search-container">
+  <div class="search-header">
+    <div class="search-title">DATABASE SEARCH PROTOCOL</div>
+    <div class="search-status">STATUS: <span class="status-active">ONLINE</span></div>
+  </div>
+  
+  <div class="search-input-container">
+    <label for="search-input">> ENTER SEARCH QUERY:</label>
+    <input type="text" id="search-input" class="terminal-input" placeholder="Type keywords..." autofocus>
+  </div>
+  
+  <div id="search-results" class="search-results">
+    <div class="search-prompt">AWAITING INPUT...</div>
+  </div>
+</div>
+
+<script>
+  const posts = [
+    {% for post in site.posts %}
+    {
+      title: "{{ post.title }}",
+      url: "{{ post.url }}",
+      date: "{{ post.date | date: '%Y-%m-%d' }}",
+      content: {{ post.content | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+
+  searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    
+    if (query.length < 2) {
+      searchResults.innerHTML = '<div class="search-prompt">AWAITING INPUT...</div>';
+      return;
+    }
+    
+    const results = posts.filter(post => {
+      return post.title.toLowerCase().includes(query) || 
+             post.content.toLowerCase().includes(query);
+    });
+    
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="search-no-results">> NO RESULTS FOUND</div>';
+      return;
+    }
+    
+    let html = '<div class="search-count">> FOUND ' + results.length + ' TRANSMISSION(S)</div>';
+    html += '<ul class="search-list">';
+    
+    results.forEach(post => {
+      html += '<li class="search-item">';
+      html += '<a href="' + post.url + '">' + post.title + '</a>';
+      html += ' <span class="search-date">[' + post.date + ']</span>';
+      html += '</li>';
+    });
+    
+    html += '</ul>';
+    searchResults.innerHTML = html;
+  });
+</script>

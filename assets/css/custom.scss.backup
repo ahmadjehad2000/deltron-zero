@@ -1,0 +1,124 @@
+---
+---
+
+@import 'jekyll-theme-hacker';
+
+/* DELTRON ZERO - 50/50 FUSION STYLING */
+
+/* Vault-Tec Color Palette */
+$vault-blue: #047E84;
+$pipboy-green: #00FF41;
+$vault-yellow: #FFC911;
+$concrete-dark: #1A1A1A;
+$concrete-gray: #2A2A2A;
+
+body {
+  background: $concrete-dark;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+}
+
+/* Header - Vault-Tec style */
+header {
+  background: linear-gradient(180deg, $vault-blue 0%, darken($vault-blue, 10%) 100%);
+  border-bottom: 4px solid $vault-yellow;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+  position: relative;
+  
+  &::after {
+    content: '[UNAUTHORIZED_BROADCAST::3030]';
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    color: $pipboy-green;
+    font-size: 0.7em;
+    opacity: 0.7;
+    font-family: monospace;
+  }
+}
+
+header h1 {
+  color: $vault-yellow !important;
+  text-shadow: 0 0 10px rgba(255, 201, 17, 0.5), 
+               2px 2px 0 rgba(0, 0, 0, 0.5);
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+header p {
+  color: $pipboy-green !important;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+/* Main content area - Post-apocalyptic concrete */
+#main_content {
+  background: $concrete-gray;
+  padding: 30px;
+  border: 1px solid darken($vault-blue, 20%);
+  border-radius: 4px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Links - Pipboy green glow */
+a {
+  color: $pipboy-green !important;
+  text-decoration: none;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+  transition: all 0.2s;
+  
+  &:hover {
+    color: $vault-yellow !important;
+    text-shadow: 0 0 10px rgba(255, 201, 17, 0.8);
+  }
+}
+
+/* Post listings */
+h2 {
+  color: $vault-yellow;
+  border-bottom: 2px solid $vault-blue;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+ul li {
+  margin: 15px 0;
+  
+  &::before {
+    content: '>> ';
+    color: $pipboy-green;
+  }
+}
+
+/* Code blocks - Full terminal aesthetic */
+pre, code {
+  background: #000 !important;
+  border: 1px solid $pipboy-green;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+code {
+  color: $pipboy-green !important;
+}
+
+/* Scanline effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 65, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}

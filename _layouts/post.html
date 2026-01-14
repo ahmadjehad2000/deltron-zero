@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+    <title>{{ page.title | default: site.title }}</title>
+  </head>
+  <body>
+    <div class="terminal-screen">
+      <div class="post-header">
+        <div class="robco-title">ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL</div>
+        <div class="system-info">DELTRON ZERO - TRANSMISSION VIEWER</div>
+        <div class="back-link">
+          <a href="/">[ESC] RETURN TO MAIN MENU</a>
+        </div>
+      </div>
+      
+      <div class="post-meta">
+        <div class="post-title-line">
+          <span class="post-label">SUBJECT:</span> {{ page.title }}
+        </div>
+        <div class="post-date-line">
+          <span class="post-label">DATE:</span> {{ page.date | date: "%Y-%m-%d %H:%M" }}
+        </div>
+        <div class="post-status">
+          <span class="post-label">STATUS:</span> <span class="status-active">TRANSMISSION_ACTIVE</span>
+        </div>
+      </div>
+      
+      <div class="post-content">
+        {{ content }}
+      </div>
+      
+      <div class="post-footer">
+        <div class="terminal-prompt">END_OF_TRANSMISSION</div>
+        <div class="back-link">
+          <a href="/">[ESC] RETURN TO MAIN MENU</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

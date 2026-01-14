@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+    <title>{{ page.title | default: site.title }}</title>
+  </head>
+  <body>
+    <div class="terminal-screen">
+      <div class="terminal-header">
+        <div class="robco-title">ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL</div>
+        <div class="system-warning">!!! WARNING: UNAUTHORIZED ACCESS DETECTED !!!</div>
+        <div class="system-info">DELTRON ZERO SECURITY TERMINAL</div>
+        <div class="system-info">LOCATION: WASTELAND.SECTOR.7::AMMAN</div>
+        <div class="system-info">CLEARANCE: LEVEL_4_REQUIRED</div>
+        
+        <div class="memory-dump">0xF964 <<-<(>$$,';' 0xFA30 ?;/+TERMS('
+0xF970 $:_: *;'$PIE 0xFA3C '**)>>]<#.H>
+0xF97C $>;?>)<JOIN 0xFA48 .....^|.\-}>
+0xF988 $ ^.'>):}'{' 0xFA54 $^`\-[#);)I$
+0xF994 IRES"`.,:>/' 0xFA60 [\  .HG.{[`/#
+0xF9A0 [<_} :$<{@[ 0xFA6C THIRD_[[*};$</div>
+      </div>
+      
+      <nav class="terminal-menu">
+        <div class="menu-title">[ SYSTEM MENU ]</div>
+        
+        <div class="menu-items">
+          <div class="menu-item">
+            <a href="/">
+              <span class="menu-number">[1]</span>
+              TRANSMISSIONS
+            </a>
+          </div>
+          
+          <div class="menu-item">
+            <a href="/about">
+              <span class="menu-number">[2]</span>
+              OPERATIVE_DOSSIER
+            </a>
+          </div>
+          
+          <div class="menu-item">
+            <a href="/projects">
+              <span class="menu-number">[3]</span>
+              ARMORY
+            </a>
+          </div>
+          
+          <div class="menu-item">
+            <a href="/search">
+              <span class="menu-number">[4]</span>
+              SEARCH
+            </a>
+          </div>
+          
+          <div class="menu-item">
+            <a href="/hack">
+              <span class="menu-number">[5]</span>
+              SECURITY_OVERRIDE
+            </a>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="terminal-content">
+        {{ content }}
+      </div>
+      
+      <div class="terminal-prompt">CONNECTION_STABLE</div>
+    </div>
+  </body>
+</html>

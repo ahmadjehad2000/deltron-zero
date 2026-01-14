@@ -1,0 +1,381 @@
+---
+layout: terminal
+title: "SECURITY OVERRIDE"
+---
+
+<div class="hack-container">
+  <div class="hack-header">
+    <div class="hack-title">ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM</div>
+    <div class="hack-subtitle">COPYRIGHT 2075-2077 ROBCO INDUSTRIES</div>
+    <div class="hack-attempts">ATTEMPTS REMAINING: <span id="attempts">4</span></div>
+  </div>
+  
+  <div id="hack-game" class="hack-game">
+    <div class="hack-column" id="column-left"></div>
+    <div class="hack-column" id="column-right"></div>
+  </div>
+  
+  <div class="hack-log" id="hack-log">
+    <div>> INITIATE HACK SEQUENCE</div>
+    <div>> SELECT WORD TO ATTEMPT ACCESS</div>
+  </div>
+</div>
+
+<div id="success-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">ACCESS GRANTED</div>
+    <div class="modal-message">SECURITY OVERRIDE SUCCESSFUL</div>
+    <div class="modal-unlock">
+      <a href="/classified" class="unlock-link">[1] ACCESS CLASSIFIED_FILES</a>
+      <a href="/admin" class="unlock-link">[2] ACCESS ADMIN_OVERRIDE</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.hack-container {
+  margin-top: 30px;
+}
+
+.hack-header {
+  border-bottom: 1px solid #33FF33;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.hack-title {
+  font-size: 20px;
+  color: #FFB000;
+  letter-spacing: 2px;
+}
+
+.hack-subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.hack-attempts {
+  margin-top: 15px;
+  font-size: 22px;
+  color: #FFB000;
+}
+
+.hack-game {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 30px 0;
+  font-family: 'VT323', monospace;
+}
+
+.hack-column {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #33FF33;
+  padding: 20px;
+  min-height: 400px;
+  line-height: 1.3;
+}
+
+.hack-word {
+  cursor: pointer;
+  color: #33FF33;
+  text-shadow: 0 0 5px rgba(51, 255, 51, 0.4);
+  transition: all 0.1s;
+}
+
+.hack-word:hover {
+  color: #FFB000;
+  text-shadow: 0 0 10px rgba(255, 176, 0, 0.8);
+  background: rgba(255, 176, 0, 0.1);
+}
+
+.hack-junk {
+  color: #33FF33;
+  opacity: 0.6;
+}
+
+.hack-log {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #33FF33;
+  padding: 20px;
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.hack-log div {
+  margin: 5px 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+  background: #0a0a0a;
+  border: 3px solid #33FF33;
+  margin: 15% auto;
+  padding: 40px;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(51, 255, 51, 0.5);
+}
+
+.modal-title {
+  font-size: 36px;
+  color: #FFB000;
+  margin-bottom: 20px;
+  animation: blink 1s infinite;
+}
+
+.modal-message {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.modal-unlock {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.unlock-link {
+  padding: 15px;
+  border: 1px solid #33FF33;
+  font-size: 20px;
+  transition: all 0.2s;
+}
+
+.unlock-link:hover {
+  background: rgba(51, 255, 51, 0.1);
+  border-color: #FFB000;
+}
+
+.search-container {
+  margin-top: 30px;
+}
+
+.search-header {
+  border-bottom: 1px solid #33FF33;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.search-title {
+  font-size: 24px;
+  color: #FFB000;
+  letter-spacing: 2px;
+}
+
+.search-status {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.search-input-container {
+  margin: 30px 0;
+}
+
+.search-input-container label {
+  display: block;
+  margin-bottom: 10px;
+  color: #FFB000;
+  font-size: 20px;
+}
+
+.terminal-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #33FF33;
+  color: #33FF33;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  padding: 15px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.terminal-input:focus {
+  outline: none;
+  border-color: #FFB000;
+  box-shadow: 0 0 15px rgba(255, 176, 0, 0.5);
+}
+
+.search-results {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #33FF33;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.search-prompt,
+.search-no-results {
+  opacity: 0.7;
+  font-size: 18px;
+}
+
+.search-count {
+  color: #FFB000;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.search-list {
+  list-style: none;
+  padding: 0;
+}
+
+.search-item {
+  margin: 15px 0;
+  padding: 10px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+
+.search-item:hover {
+  border-left-color: #FFB000;
+  background: rgba(255, 176, 0, 0.05);
+  padding-left: 15px;
+}
+
+.search-date {
+  color: #FFB000;
+  opacity: 0.7;
+  font-size: 16px;
+  margin-left: 10px;
+}
+</style>
+
+<script>
+const words = [
+  'SECURITY', 'PASSWORD', 'TERMINAL', 'PROTOCOL', 'DATABASE',
+  'FIREWALL', 'MILITARY', 'OVERRIDE', 'COMPILER', 'COMPUTER',
+  'HARDWARE', 'SOFTWARE', 'DIRECTOR', 'BROTHERS', 'REMEMBER'
+];
+
+const correctWord = words[Math.floor(Math.random() * words.length)];
+let attempts = 4;
+let gameActive = true;
+
+const junkChars = '!@#$%^&*(){}[]|\\<>?/~`-_=+;:.,';
+
+function generateJunk(length) {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += junkChars[Math.floor(Math.random() * junkChars.length)];
+  }
+  return result;
+}
+
+function generateHexAddress() {
+  return '0x' + Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+function getSimilarity(word1, word2) {
+  let count = 0;
+  for (let i = 0; i < word1.length; i++) {
+    if (word1[i] === word2[i]) count++;
+  }
+  return count;
+}
+
+function generateDisplay() {
+  const leftCol = document.getElementById('column-left');
+  const rightCol = document.getElementById('column-right');
+  
+  let leftHTML = '';
+  let rightHTML = '';
+  
+  const wordsPerColumn = 6;
+  const shuffled = [...words].sort(() => Math.random() - 0.5);
+  const leftWords = shuffled.slice(0, wordsPerColumn);
+  const rightWords = shuffled.slice(wordsPerColumn, wordsPerColumn * 2);
+  
+  function addWordsToColumn(wordList) {
+    let html = '';
+    let position = 0;
+    
+    wordList.forEach((word, index) => {
+      const junkBefore = generateJunk(Math.floor(Math.random() * 5) + 3);
+      const junkAfter = generateJunk(Math.floor(Math.random() * 5) + 3);
+      
+      if (position % 12 === 0) {
+        html += '<div>' + generateHexAddress() + ' ';
+      }
+      
+      html += '<span class="hack-junk">' + junkBefore + '</span>';
+      html += '<span class="hack-word" data-word="' + word + '">' + word + '</span>';
+      html += '<span class="hack-junk">' + junkAfter + '</span>';
+      
+      position += word.length + junkBefore.length + junkAfter.length;
+      
+      if (position > 50 || index === wordList.length - 1) {
+        html += '</div>';
+        position = 0;
+      }
+    });
+    
+    return html;
+  }
+  
+  leftCol.innerHTML = addWordsToColumn(leftWords);
+  rightCol.innerHTML = addWordsToColumn(rightWords);
+  
+  document.querySelectorAll('.hack-word').forEach(word => {
+    word.addEventListener('click', handleWordClick);
+  });
+}
+
+function handleWordClick(e) {
+  if (!gameActive) return;
+  
+  const selectedWord = e.target.dataset.word;
+  const log = document.getElementById('hack-log');
+  
+  log.innerHTML += '<div>> ' + selectedWord + '</div>';
+  
+  if (selectedWord === correctWord) {
+    log.innerHTML += '<div>> EXACT MATCH!</div>';
+    log.innerHTML += '<div>> ACCESS GRANTED</div>';
+    gameActive = false;
+    document.getElementById('success-modal').style.display = 'block';
+  } else {
+    attempts--;
+    document.getElementById('attempts').textContent = attempts;
+    
+    const similarity = getSimilarity(selectedWord, correctWord);
+    log.innerHTML += '<div>> ENTRY DENIED</div>';
+    log.innerHTML += '<div>> LIKENESS=' + similarity + '</div>';
+    
+    if (attempts === 0) {
+      log.innerHTML += '<div>> LOCKOUT IMMINENT</div>';
+      log.innerHTML += '<div>> TERMINAL LOCKED</div>';
+      gameActive = false;
+      setTimeout(() => {
+        alert('TERMINAL LOCKED. Reloading...');
+        location.reload();
+      }, 2000);
+    }
+  }
+  
+  log.scrollTop = log.scrollHeight;
+}
+
+generateDisplay();
+
+// Click outside modal to close (optional)
+window.onclick = function(event) {
+  const modal = document.getElementById('success-modal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+}
+</script>
