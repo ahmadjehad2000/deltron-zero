@@ -4,11 +4,54 @@ layout: default
 
 {{ content }}
 
-<h2>POSTS</h2>
-<ul>
+<div class="transmission-log">
+  <div class="log-header">
+    <span class="log-label">▶ TRANSMISSION_ARCHIVE</span>
+    <span class="log-count">{{ site.posts | size }} FILE(S) INDEXED</span>
+  </div>
+  <div class="log-divider"></div>
+
   {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date | date: "%b %d, %Y" }}
-    </li>
+  <article class="transmission-entry">
+    <div class="entry-header">
+      <div class="entry-id">
+        [SIGNAL-{% assign idx = forloop.index %}{% if idx < 10 %}00{{ idx }}{% elsif idx < 100 %}0{{ idx }}{% else %}{{ idx }}{% endif %}]
+      </div>
+      <div class="entry-status">
+        <span class="status-dot">■</span> ARCHIVED
+      </div>
+    </div>
+
+    <div class="entry-title">
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    </div>
+
+    <div class="entry-meta">
+      <span class="entry-label">DATE:</span> {{ post.date | date: "%Y-%m-%d %H:%M" }}
+      {% if post.categories.size > 0 %}
+      <span class="entry-sep"> ║ </span>
+      <span class="entry-label">SECTOR:</span> {{ post.categories | join: " / " | upcase }}
+      {% endif %}
+    </div>
+
+    {% if post.excerpt %}
+    <div class="entry-excerpt">
+      {{ post.excerpt | strip_html | truncatewords: 35 }}
+    </div>
+    {% endif %}
+
+    <div class="entry-action">
+      <a href="{{ post.url | relative_url }}">&gt;_ ACCESS TRANSMISSION</a>
+    </div>
+  </article>
   {% endfor %}
-</ul>
+
+  {% if site.posts.size == 0 %}
+  <div class="no-entries">
+    &gt; NO TRANSMISSIONS FOUND IN ARCHIVE<br>
+    &gt; SECTOR APPEARS EMPTY<br>
+    &gt; AWAITING SIGNAL...<br>
+    &gt; _
+  </div>
+  {% endif %}
+</div>
