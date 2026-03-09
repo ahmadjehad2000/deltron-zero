@@ -6,19 +6,18 @@ layout: default
 
 <div class="transmission-log">
   <div class="log-header">
-    <span class="log-label">▶ TRANSMISSION_ARCHIVE</span>
-    <span class="log-count">{{ site.posts | size }} FILE(S) INDEXED</span>
+    <span class="log-label">📁 Transmission Archive</span>
+    <span class="log-count">{{ site.posts | size }} file(s)</span>
   </div>
-  <div class="log-divider"></div>
 
   {% for post in site.posts %}
   <article class="transmission-entry">
     <div class="entry-header">
       <div class="entry-id">
-        [SIGNAL-{% assign idx = forloop.index %}{% if idx < 10 %}00{{ idx }}{% elsif idx < 100 %}0{{ idx }}{% else %}{{ idx }}{% endif %}]
+        SIGNAL-{% assign idx = forloop.index %}{% if idx < 10 %}00{{ idx }}{% elsif idx < 100 %}0{{ idx }}{% else %}{{ idx }}{% endif %}
       </div>
       <div class="entry-status">
-        <span class="status-dot">■</span> ARCHIVED
+        <span class="status-dot">●</span> Archived
       </div>
     </div>
 
@@ -27,10 +26,10 @@ layout: default
     </div>
 
     <div class="entry-meta">
-      <span class="entry-label">DATE:</span> {{ post.date | date: "%Y-%m-%d %H:%M" }}
+      <span class="entry-label">Date:</span> {{ post.date | date: "%B %d, %Y at %I:%M %p" }}
       {% if post.categories.size > 0 %}
-      <span class="entry-sep"> ║ </span>
-      <span class="entry-label">SECTOR:</span> {{ post.categories | join: " / " | upcase }}
+      <span class="entry-sep">|</span>
+      <span class="entry-label">Category:</span> {{ post.categories | join: ", " }}
       {% endif %}
     </div>
 
@@ -41,17 +40,15 @@ layout: default
     {% endif %}
 
     <div class="entry-action">
-      <a href="{{ post.url | relative_url }}">&gt;_ ACCESS TRANSMISSION</a>
+      <a href="{{ post.url | relative_url }}">Open Transmission →</a>
     </div>
   </article>
   {% endfor %}
 
   {% if site.posts.size == 0 %}
   <div class="no-entries">
-    &gt; NO TRANSMISSIONS FOUND IN ARCHIVE<br>
-    &gt; SECTOR APPEARS EMPTY<br>
-    &gt; AWAITING SIGNAL...<br>
-    &gt; _
+    No transmissions found in archive.<br>
+    This folder is empty.
   </div>
   {% endif %}
 </div>
