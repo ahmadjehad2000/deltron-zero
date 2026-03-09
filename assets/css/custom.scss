@@ -9,11 +9,21 @@
 
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-$terminal-green: #44FF44;
+/* ========================================
+   VARIABLES
+   ======================================== */
+
+$terminal-green:      #44FF44;
 $terminal-dark-green: #00FF00;
-$terminal-bg: #0a0a0a;
-$terminal-glow: rgba(68, 255, 68, 0.3);
-$warning-amber: #FFB000;
+$terminal-dim:        rgba(68, 255, 68, 0.65);
+$terminal-bg:         #080808;
+$terminal-glow:       rgba(68, 255, 68, 0.28);
+$warning-amber:       #FFB000;
+$amber-glow:          rgba(255, 176, 0, 0.25);
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
 
 * {
   margin: 0;
@@ -25,35 +35,86 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: $terminal-bg;
+  border-left: 1px solid rgba(68, 255, 68, 0.15);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(68, 255, 68, 0.35);
+  border: 1px solid rgba(68, 255, 68, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: $warning-amber;
+}
+
 body {
-  background: #0a0a0a;
-  color: #44FF44;
+  background: $terminal-bg;
+  color: $terminal-green;
   font-family: 'VT323', monospace;
   font-size: 20px;
   line-height: 1.6;
   padding: 20px;
-  text-shadow: 0 0 3px rgba(68, 255, 68, 0.3);
+  text-shadow: 0 0 3px $terminal-glow;
   overflow-x: hidden;
   position: relative;
+  /* Subtle CRT flicker */
+  animation: screenFlicker 8s infinite;
 }
 
 /* ========================================
-   SMOOTH PAGE TRANSITIONS
+   CRT EFFECTS
    ======================================== */
 
-.terminal-screen {
-  animation: fadeIn 0.4s ease-out;
+/* Scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.045),
+    rgba(0, 0, 0, 0.045) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.7;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Vignette overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  pointer-events: none;
+  z-index: 8999;
+}
+
+@keyframes screenFlicker {
+  0%   { opacity: 1; }
+  91%  { opacity: 1; }
+  92%  { opacity: 0.97; }
+  93%  { opacity: 1; }
+  96%  { opacity: 0.98; }
+  97%  { opacity: 1; }
+  100% { opacity: 1; }
 }
 
 /* ========================================
@@ -63,16 +124,19 @@ body {
 .terminal-screen {
   max-width: 1000px;
   margin: 0 auto;
-  border: 3px solid $terminal-green;
-  padding: 30px;
+  border: 2px solid rgba(68, 255, 68, 0.7);
+  padding: 32px 38px;
   background: $terminal-bg;
-  box-shadow: 
-    inset 0 0 100px rgba(0, 0, 0, 0.9),
-    0 0 30px $terminal-glow;
+  box-shadow:
+    inset 0 0 90px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(68, 255, 68, 0.12),
+    0 0 70px rgba(68, 255, 68, 0.05);
   position: relative;
   z-index: 10;
+  animation: fadeIn 0.35s ease-out;
 }
 
+/* CRT scanline texture on container */
 .terminal-screen::before {
   content: '';
   position: absolute;
@@ -84,14 +148,27 @@ body {
     0deg,
     transparent,
     transparent 2px,
-    rgba(68, 255, 68, 0.02) 2px,
-    rgba(68, 255, 68, 0.02) 4px
+    rgba(68, 255, 68, 0.012) 2px,
+    rgba(68, 255, 68, 0.012) 4px
   );
   pointer-events: none;
   z-index: 1;
 }
 
-/* Ensure all content is above the scanlines */
+/* Pip-Boy corner marks */
+.terminal-screen::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid rgba(68, 255, 68, 0.12);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure content sits above scanlines */
 .terminal-header,
 .terminal-menu,
 .terminal-content,
@@ -99,9 +176,15 @@ body {
 .post-header,
 .post-meta,
 .post-content,
-.post-footer {
+.post-footer,
+.transmission-log {
   position: relative;
   z-index: 2;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 /* ========================================
@@ -109,85 +192,107 @@ body {
    ======================================== */
 
 .terminal-header {
-  border-bottom: 1px solid $terminal-green;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(68, 255, 68, 0.35);
+  padding-bottom: 18px;
+  margin-bottom: 18px;
 }
 
 .robco-title {
-  font-size: 22px;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
+  font-size: 21px;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
   text-align: center;
+  color: $terminal-green;
+  opacity: 0.85;
 }
 
 .system-warning {
   color: $warning-amber;
-  font-size: 20px;
-  margin: 10px 0;
+  font-size: 19px;
+  margin: 8px 0;
   animation: blink 2s infinite;
   text-align: center;
 }
 
 .system-info {
-  font-size: 18px;
-  margin: 5px 0;
-  opacity: 0.9;
+  font-size: 17px;
+  margin: 4px 0;
+  opacity: 0.75;
   text-align: center;
+  color: $terminal-dim;
 }
 
 .memory-dump {
-  font-size: 14px;
-  line-height: 1.2;
-  opacity: 0.5;
-  margin: 15px 0;
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0.28;
+  margin: 14px 0 4px;
   letter-spacing: 1px;
   white-space: pre;
   text-align: center;
+  color: $terminal-dim;
+}
+
+/* Status bar strip at very bottom of header */
+.header-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(68, 255, 68, 0.15);
+  font-size: 14px;
+  opacity: 0.5;
+  letter-spacing: 1px;
+}
+
+.header-status span {
+  color: $terminal-dim;
 }
 
 /* ========================================
-   TERMINAL NAVIGATION MENU - HORIZONTAL
+   NAVIGATION MENU
    ======================================== */
 
 .terminal-menu {
-  margin: 30px 0;
-  padding: 20px 0;
-  border-top: 1px solid $terminal-green;
-  border-bottom: 1px solid $terminal-green;
+  margin: 20px 0;
+  padding: 14px 0;
+  border-top: 1px solid rgba(68, 255, 68, 0.2);
+  border-bottom: 1px solid rgba(68, 255, 68, 0.2);
 }
 
 .menu-title {
-  font-size: 20px;
-  color: $warning-amber;
-  margin-bottom: 15px;
-  letter-spacing: 2px;
+  font-size: 16px;
+  color: $terminal-dim;
+  margin-bottom: 12px;
+  letter-spacing: 4px;
   text-align: center;
+  opacity: 0.6;
 }
 
 .menu-items {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .menu-item {
-  padding: 10px 20px;
+  padding: 7px 16px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
   border: 1px solid transparent;
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: 1px;
   position: relative;
 }
 
 .menu-item:hover {
   color: $warning-amber;
-  text-shadow: 0 0 15px rgba(255, 176, 0, 0.9);
-  border: 1px solid $warning-amber;
-  background: rgba(255, 176, 0, 0.05);
+  text-shadow: 0 0 14px rgba(255, 176, 0, 0.9);
+  border: 1px solid rgba(255, 176, 0, 0.5);
+  background: rgba(255, 176, 0, 0.04);
   transform: translateY(-2px);
 }
 
@@ -196,7 +301,7 @@ body {
   text-decoration: none;
   text-shadow: 0 0 5px $terminal-glow;
   display: block;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
 }
 
 .menu-item a:hover {
@@ -210,82 +315,79 @@ body {
 .menu-number {
   display: inline-block;
   color: $warning-amber;
-  font-size: 18px;
-  margin-right: 5px;
+  font-size: 16px;
+  margin-right: 4px;
+  opacity: 0.75;
 }
 
-.menu-arrow {
-  color: $terminal-green;
-  margin-right: 5px;
-}
-
-.menu-separator {
-  display: none;
-}
-
-.menu-locked {
-  display: none;
-}
+.menu-arrow   { color: $terminal-green; margin-right: 5px; }
+.menu-separator { display: none; }
+.menu-locked    { display: none; }
 
 /* ========================================
    TERMINAL CONTENT
    ======================================== */
 
 .terminal-content {
-  margin-top: 30px;
-  border-top: 1px solid $terminal-green;
-  padding-top: 30px;
+  margin-top: 22px;
+  border-top: 1px solid rgba(68, 255, 68, 0.2);
+  padding-top: 22px;
 }
 
 .terminal-prompt {
-  margin: 15px 0;
+  margin: 20px 0 5px;
   text-align: center;
-  opacity: 0.7;
+  opacity: 0.4;
+  font-size: 16px;
+  letter-spacing: 3px;
 }
 
 .terminal-prompt::before {
   content: '> ';
   color: $warning-amber;
+  opacity: 0.6;
 }
 
-h1, h2, h3 {
+/* ========================================
+   TYPOGRAPHY — GLOBAL HEADINGS
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
   color: $terminal-green;
   font-family: 'VT323', monospace;
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin: 20px 0 10px;
+  margin: 22px 0 10px;
+  line-height: 1.3;
 }
 
 h1 {
   font-size: 32px;
-  border-bottom: 1px solid $terminal-green;
-  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(68, 255, 68, 0.35);
+  padding-bottom: 8px;
+  color: $warning-amber;
 }
 
-h2 {
-  font-size: 28px;
-  margin-top: 30px;
-}
-
-h3 {
-  font-size: 24px;
-}
+h2 { font-size: 26px; margin-top: 30px; }
+h3 { font-size: 22px; }
+h4 { font-size: 20px; color: $warning-amber; opacity: 0.9; }
 
 p {
-  margin: 15px 0;
-  line-height: 1.8;
+  margin: 14px 0;
+  line-height: 1.75;
+  font-size: 20px;
 }
 
 /* ========================================
-   TERMINAL LINKS & LISTS
+   LINKS
    ======================================== */
 
 a {
   color: $terminal-green !important;
   text-decoration: none;
   text-shadow: 0 0 5px $terminal-glow;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 a:hover {
@@ -293,138 +395,478 @@ a:hover {
   text-shadow: 0 0 10px rgba(255, 176, 0, 0.8);
 }
 
-a::before {
-  content: none !important;
-}
+a::before { content: none !important; }
+
+/* ========================================
+   LISTS
+   ======================================== */
 
 ul, ol {
-  margin: 15px 0;
-  padding-left: 30px;
+  margin: 14px 0;
+  padding-left: 18px;
 }
 
 ul li {
   list-style: none;
-  margin: 10px 0;
+  margin: 7px 0;
+  padding-left: 4px;
+  line-height: 1.7;
   position: relative;
-  padding-left: 0;
 }
 
 ul li::before {
-  content: '- ';
-  position: static;
+  content: '─ ';
   color: $warning-amber;
-  margin-right: 5px;
+  opacity: 0.65;
+}
+
+ol {
+  counter-reset: ol-counter;
+  list-style: none;
+  padding-left: 18px;
+}
+
+ol li {
+  counter-increment: ol-counter;
+  margin: 7px 0;
+  padding-left: 4px;
+  line-height: 1.7;
+}
+
+ol li::before {
+  content: counter(ol-counter) '. ';
+  color: $warning-amber;
+  opacity: 0.75;
 }
 
 /* ========================================
-   CODE BLOCKS
+   CODE BLOCKS — READABLE & FALLOUT-THEMED
    ======================================== */
 
 pre, code {
-  background: rgba(0, 0, 0, 0.5) !important;
-  border: 1px solid $terminal-green;
   font-family: 'VT323', monospace;
-  color: $terminal-green !important;
-}
-
-pre {
-  padding: 20px;
-  margin: 20px 0;
-  overflow-x: auto;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
-}
-
-pre::before {
-  content: '$ ';
-  color: $warning-amber;
 }
 
 code {
-  padding: 2px 6px;
+  background: rgba(68, 255, 68, 0.07) !important;
+  border: 1px solid rgba(68, 255, 68, 0.28);
+  color: $terminal-green !important;
+  padding: 1px 7px;
+  font-size: 18px;
+  border-radius: 0;
+}
+
+pre {
+  background: rgba(0, 0, 0, 0.55) !important;
+  border: 1px solid rgba(68, 255, 68, 0.35);
+  border-left: 3px solid $warning-amber;
+  padding: 18px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.85);
+  position: relative;
+  line-height: 1.6;
+}
+
+pre code {
+  background: transparent !important;
+  border: none;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1.6;
+  color: $terminal-green !important;
+}
+
+/* Syntax highlight overrides for dark terminal */
+.highlight { background: transparent !important; }
+.highlight pre { border-left: 3px solid $warning-amber; }
+.highlight .k,
+.highlight .kd,
+.highlight .kn { color: $warning-amber; text-shadow: 0 0 6px rgba(255, 176, 0, 0.4); }
+.highlight .s,
+.highlight .s1,
+.highlight .s2 { color: #8aff8a; }
+.highlight .c,
+.highlight .c1,
+.highlight .cm { opacity: 0.45; }
+.highlight .mi,
+.highlight .mf { color: #aaffaa; }
+
+/* ========================================
+   TABLES
+   ======================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
   font-size: 18px;
 }
 
-/* ========================================
-   POST LISTINGS ON HOME
-   ======================================== */
-
-.post-list {
-  margin: 20px 0;
+table thead tr {
+  background: rgba(68, 255, 68, 0.07);
+  border-bottom: 2px solid rgba(68, 255, 68, 0.5);
 }
 
-.post-item {
+table th {
+  color: $warning-amber;
+  padding: 10px 15px;
+  text-align: left;
+  letter-spacing: 1px;
+  font-weight: normal;
+  border: 1px solid rgba(68, 255, 68, 0.25);
+}
+
+table td {
+  padding: 8px 15px;
+  border: 1px solid rgba(68, 255, 68, 0.15);
+  line-height: 1.65;
+}
+
+table tr:nth-child(even) td {
+  background: rgba(68, 255, 68, 0.02);
+}
+
+table tr:hover td {
+  background: rgba(68, 255, 68, 0.04);
+}
+
+/* ========================================
+   IMAGES
+   ======================================== */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 22px auto;
+  border: 1px solid rgba(68, 255, 68, 0.35);
+  box-shadow: 0 0 25px rgba(68, 255, 68, 0.08);
+  filter: sepia(15%) hue-rotate(80deg) saturate(0.85) brightness(0.88);
+}
+
+/* ========================================
+   BLOCKQUOTES
+   ======================================== */
+
+blockquote {
+  border-left: 3px solid $warning-amber;
+  background: rgba(255, 176, 0, 0.03);
+  padding: 14px 20px;
+  margin: 22px 0;
+  opacity: 0.9;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* ========================================
+   HORIZONTAL RULE
+   ======================================== */
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(68, 255, 68, 0.25);
+  margin: 32px 0;
+  position: relative;
+  text-align: center;
+}
+
+hr::after {
+  content: ' ◈ ';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: $terminal-bg;
+  padding: 0 10px;
+  color: $warning-amber;
+  opacity: 0.5;
+  font-size: 16px;
+}
+
+/* ========================================
+   HOME PAGE — TRANSMISSION LOG
+   ======================================== */
+
+.transmission-log {
   margin: 15px 0;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0 10px;
+  margin-bottom: 0;
+}
+
+.log-label {
+  color: $warning-amber;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.log-count {
+  font-size: 16px;
+  color: $terminal-dim;
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+
+.log-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(68, 255, 68, 0.5) 20%,
+    rgba(68, 255, 68, 0.5) 80%,
+    transparent 100%
+  );
+  margin-bottom: 22px;
+}
+
+.transmission-entry {
+  margin: 0 0 16px;
+  padding: 16px 18px 16px 20px;
+  border: 1px solid rgba(68, 255, 68, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  transition: all 0.14s ease;
+  position: relative;
+}
+
+.transmission-entry::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: transparent;
+  transition: background 0.14s ease;
+}
+
+.transmission-entry:hover {
+  border-color: rgba(68, 255, 68, 0.45);
+  background: rgba(68, 255, 68, 0.025);
+}
+
+.transmission-entry:hover::before {
+  background: $warning-amber;
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.entry-id {
+  color: $terminal-dim;
+  font-size: 16px;
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+.entry-status {
+  font-size: 15px;
+  color: $terminal-dim;
+  opacity: 0.65;
+}
+
+.status-dot {
+  color: $terminal-green;
+  text-shadow: 0 0 6px $terminal-green;
+  font-size: 11px;
+  margin-right: 3px;
+}
+
+.entry-title {
+  font-size: 25px;
+  margin: 4px 0 7px;
+  letter-spacing: 1px;
+  line-height: 1.25;
+}
+
+.entry-title a {
+  color: $terminal-green !important;
+  transition: all 0.14s;
+}
+
+.entry-title a::before {
+  content: '> ';
+  color: $warning-amber;
+  opacity: 0.65;
+}
+
+.entry-title a:hover {
+  color: $warning-amber !important;
+  text-shadow: 0 0 14px rgba(255, 176, 0, 0.55);
+}
+
+.entry-meta {
+  font-size: 16px;
+  color: $terminal-dim;
+  opacity: 0.7;
+  margin-bottom: 9px;
+  letter-spacing: 0.5px;
+}
+
+.entry-label {
+  color: $warning-amber;
+  opacity: 0.75;
+}
+
+.entry-sep {
+  opacity: 0.35;
+  margin: 0 6px;
+}
+
+.entry-excerpt {
+  font-size: 19px;
+  line-height: 1.72;
+  margin: 10px 0;
+  opacity: 0.72;
+  border-left: 2px solid rgba(68, 255, 68, 0.18);
+  padding-left: 12px;
+  color: $terminal-green;
+}
+
+.entry-action {
+  margin-top: 10px;
+  font-size: 17px;
+}
+
+.entry-action a {
+  color: $warning-amber !important;
+  opacity: 0.75;
+  transition: all 0.14s;
+  letter-spacing: 0.5px;
+}
+
+.entry-action a:hover {
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(255, 176, 0, 0.8);
+  letter-spacing: 2px;
+}
+
+.no-entries {
+  padding: 35px;
+  text-align: center;
+  opacity: 0.45;
+  line-height: 2.2;
+  font-size: 19px;
+}
+
+/* ========================================
+   POST FALLBACK LIST (generic ul)
+   ======================================== */
+
+.post-list { margin: 18px 0; }
+
+.post-item {
+  margin: 10px 0;
   padding: 10px 0;
-  border-bottom: 1px dotted rgba(68, 255, 68, 0.3);
-  transition: all 0.15s ease;
+  border-bottom: 1px dotted rgba(68, 255, 68, 0.18);
+  transition: all 0.14s ease;
 }
 
 .post-item:hover {
-  background: rgba(68, 255, 68, 0.05);
+  background: rgba(68, 255, 68, 0.03);
   padding-left: 10px;
 }
 
 .post-date {
   color: $warning-amber;
   font-size: 16px;
+  opacity: 0.75;
 }
 
 /* ========================================
-   POST-SPECIFIC LAYOUT
+   POST LAYOUT — HEADER & META
    ======================================== */
 
 .post-header {
-  border-bottom: 1px solid $terminal-green;
-  padding-bottom: 15px;
-  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(68, 255, 68, 0.3);
+  padding-bottom: 16px;
+  margin-bottom: 22px;
 }
 
 .post-header .robco-title {
-  font-size: 20px;
+  font-size: 19px;
   letter-spacing: 2px;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
 .post-header .system-info {
+  font-size: 15px;
+  opacity: 0.65;
+}
+
+.post-nav {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(68, 255, 68, 0.15);
   font-size: 16px;
+}
+
+.post-nav a {
+  color: $terminal-dim !important;
+  opacity: 0.75;
+  transition: all 0.14s;
+  letter-spacing: 1px;
+}
+
+.post-nav a:hover {
+  color: $warning-amber !important;
+  opacity: 1;
+}
+
+.post-nav .nav-active {
+  color: $warning-amber !important;
   opacity: 0.9;
 }
 
-.back-link {
-  margin-top: 15px;
-}
+.back-link { margin-top: 12px; }
 
 .back-link a {
   color: $warning-amber !important;
-  font-size: 18px;
-  transition: all 0.2s ease;
+  font-size: 17px;
+  transition: all 0.15s ease;
+  opacity: 0.8;
 }
 
 .back-link a:hover {
-  text-shadow: 0 0 15px rgba(255, 176, 0, 0.9);
-  transform: translateX(-5px);
-  display: inline-block;
+  opacity: 1;
+  text-shadow: 0 0 14px rgba(255, 176, 0, 0.9);
 }
 
 .post-meta {
-  background: rgba(68, 255, 68, 0.05);
-  border: 1px solid $terminal-green;
-  padding: 20px;
-  margin-bottom: 30px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(68, 255, 68, 0.25);
+  border-left: 3px solid $warning-amber;
+  padding: 16px 20px;
+  margin-bottom: 28px;
 }
 
 .post-title-line,
 .post-date-line,
 .post-status {
-  margin: 8px 0;
-  font-size: 20px;
+  margin: 5px 0;
+  font-size: 18px;
+  line-height: 1.5;
 }
 
 .post-label {
   color: $warning-amber;
   display: inline-block;
-  width: 120px;
-  font-weight: bold;
+  width: 110px;
+  opacity: 0.85;
 }
 
 .status-active {
@@ -432,98 +874,179 @@ code {
   animation: blink 3s infinite;
 }
 
+/* ========================================
+   POST CONTENT — READABILITY FOCUS
+   ======================================== */
+
 .post-content {
-  padding: 30px 0;
+  padding: 22px 0;
+  font-size: 22px;
+  line-height: 1.88;
+}
+
+.post-content p {
+  margin: 18px 0;
+  font-size: 22px;
+  line-height: 1.88;
+}
+
+/* Post headings override */
+.post-content h1 {
+  font-size: 30px;
+  color: $warning-amber;
+  margin-top: 38px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 176, 0, 0.3);
+  padding-bottom: 8px;
 }
 
 .post-content h1:first-child {
   margin-top: 0;
-  font-size: 36px;
-  color: $warning-amber;
 }
 
-.post-content hr {
-  border: none;
-  border-top: 1px solid $terminal-green;
-  margin: 30px 0;
-  opacity: 0.5;
+.post-content h2 {
+  font-size: 25px;
+  color: $terminal-green;
+  margin-top: 36px;
+  margin-bottom: 14px;
+  padding-left: 10px;
+  border-left: 3px solid rgba(255, 176, 0, 0.5);
+}
+
+.post-content h2::before { content: none; }
+
+.post-content h3 {
+  font-size: 22px;
+  margin-top: 28px;
+  margin-bottom: 10px;
+  color: $terminal-green;
+  opacity: 0.9;
+}
+
+.post-content h3::before { content: none; }
+
+.post-content h4 {
+  font-size: 20px;
+  color: $warning-amber;
+  opacity: 0.85;
+}
+
+.post-content ul li,
+.post-content ol li {
+  font-size: 21px;
+  line-height: 1.8;
+  margin: 8px 0;
 }
 
 .post-content strong {
   color: $warning-amber;
+  text-shadow: 0 0 6px rgba(255, 176, 0, 0.3);
+}
+
+.post-content em {
+  font-style: normal;
+  border-bottom: 1px dotted rgba(68, 255, 68, 0.4);
 }
 
 .post-content blockquote {
   border-left: 3px solid $warning-amber;
-  padding-left: 20px;
-  margin: 20px 0;
-  opacity: 0.9;
+  background: rgba(255, 176, 0, 0.03);
+  padding: 14px 20px;
+  margin: 25px 0;
+  font-size: 20px;
+  line-height: 1.82;
 }
 
+.post-content blockquote p {
+  margin: 0;
+  font-size: 20px;
+}
+
+.post-content hr {
+  border: none;
+  border-top: 1px solid rgba(68, 255, 68, 0.25);
+  margin: 36px 0;
+}
+
+/* Post content code — slightly larger for readability */
+.post-content pre {
+  font-size: 19px;
+}
+
+.post-content pre code {
+  font-size: 19px;
+}
+
+.post-content code {
+  font-size: 19px;
+}
+
+/* ========================================
+   POST FOOTER
+   ======================================== */
+
 .post-footer {
-  border-top: 1px solid $terminal-green;
-  padding-top: 30px;
-  margin-top: 40px;
+  border-top: 1px solid rgba(68, 255, 68, 0.25);
+  padding-top: 24px;
+  margin-top: 42px;
 }
 
 .post-footer .terminal-prompt {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 }
 
 .post-footer .back-link a {
   color: $warning-amber !important;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 /* ========================================
-   SEARCH & HACK GAME STYLES
+   SEARCH & HACK GAME
    ======================================== */
 
 .hack-container,
-.search-container {
-  margin-top: 30px;
-}
+.search-container { margin-top: 22px; }
 
 .hack-header,
 .search-header {
-  border-bottom: 1px solid $terminal-green;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(68, 255, 68, 0.3);
+  padding-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .hack-title,
 .search-title {
-  font-size: 24px;
+  font-size: 23px;
   color: $warning-amber;
   letter-spacing: 2px;
 }
 
 .hack-subtitle {
-  font-size: 16px;
-  opacity: 0.8;
+  font-size: 15px;
+  opacity: 0.65;
   margin-top: 5px;
 }
 
 .hack-attempts {
-  margin-top: 15px;
-  font-size: 22px;
+  margin-top: 12px;
+  font-size: 21px;
   color: $warning-amber;
 }
 
 .hack-game {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin: 30px 0;
+  gap: 22px;
+  margin: 22px 0;
   font-family: 'VT323', monospace;
 }
 
 .hack-column {
   background: rgba(0, 0, 0, 0.5);
-  border: 1px solid $terminal-green;
-  padding: 20px;
+  border: 1px solid rgba(68, 255, 68, 0.25);
+  padding: 17px;
   min-height: 400px;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .hack-word {
@@ -536,129 +1059,132 @@ code {
 .hack-word:hover {
   color: $warning-amber;
   text-shadow: 0 0 10px rgba(255, 176, 0, 0.8);
-  background: rgba(255, 176, 0, 0.1);
+  background: rgba(255, 176, 0, 0.09);
 }
 
 .hack-junk {
   color: $terminal-green;
-  opacity: 0.6;
+  opacity: 0.45;
 }
 
 .hack-log {
   background: rgba(0, 0, 0, 0.5);
-  border: 1px solid $terminal-green;
-  padding: 20px;
-  margin-top: 20px;
+  border: 1px solid rgba(68, 255, 68, 0.25);
+  padding: 17px;
+  margin-top: 18px;
   max-height: 200px;
   overflow-y: auto;
 }
 
-.hack-log div {
-  margin: 5px 0;
-}
+.hack-log div { margin: 4px 0; }
 
 .modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 10000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.93);
 }
 
 .modal-content {
-  background: #0a0a0a;
-  border: 3px solid $terminal-green;
+  background: $terminal-bg;
+  border: 2px solid $terminal-green;
   margin: 15% auto;
   padding: 40px;
   width: 80%;
   max-width: 600px;
   text-align: center;
-  box-shadow: 0 0 50px $terminal-glow;
+  box-shadow: 0 0 60px rgba(68, 255, 68, 0.18);
 }
 
 .modal-title {
-  font-size: 36px;
+  font-size: 34px;
   color: $warning-amber;
   margin-bottom: 20px;
   animation: blink 1s infinite;
 }
 
 .modal-message {
-  font-size: 24px;
-  margin-bottom: 30px;
+  font-size: 22px;
+  margin-bottom: 28px;
 }
 
 .modal-unlock {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
 }
 
 .unlock-link {
-  padding: 15px;
-  border: 1px solid $terminal-green;
-  font-size: 20px;
-  transition: all 0.2s;
+  padding: 14px;
+  border: 1px solid rgba(68, 255, 68, 0.4);
+  font-size: 19px;
+  transition: all 0.18s;
 }
 
 .unlock-link:hover {
-  background: rgba(68, 255, 68, 0.1);
+  background: rgba(68, 255, 68, 0.08);
   border-color: $warning-amber;
 }
 
 .search-status {
-  margin-top: 10px;
-  font-size: 18px;
+  margin-top: 9px;
+  font-size: 17px;
+  opacity: 0.65;
 }
 
 .search-input-container {
-  margin: 30px 0;
+  margin: 22px 0;
 }
 
 .search-input-container label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 9px;
   color: $warning-amber;
-  font-size: 20px;
+  font-size: 19px;
+  opacity: 0.88;
 }
 
 .terminal-input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid $terminal-green;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(68, 255, 68, 0.35);
+  border-bottom: 2px solid rgba(68, 255, 68, 0.6);
   color: $terminal-green;
   font-family: 'VT323', monospace;
-  font-size: 22px;
-  padding: 15px;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  font-size: 21px;
+  padding: 11px 14px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85);
+  transition: all 0.14s;
 }
 
 .terminal-input:focus {
   outline: none;
-  border-color: $warning-amber;
-  box-shadow: 0 0 15px rgba(255, 176, 0, 0.5);
+  border-color: rgba(255, 176, 0, 0.6);
+  border-bottom-color: $warning-amber;
+  box-shadow: 0 0 14px rgba(255, 176, 0, 0.22);
 }
 
 .search-results {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid $terminal-green;
-  padding: 20px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(68, 255, 68, 0.25);
+  padding: 18px;
   min-height: 200px;
 }
 
 .search-prompt,
 .search-no-results {
-  opacity: 0.7;
-  font-size: 18px;
+  opacity: 0.55;
+  font-size: 17px;
 }
 
 .search-count {
   color: $warning-amber;
-  margin-bottom: 15px;
-  font-size: 20px;
+  margin-bottom: 14px;
+  font-size: 19px;
 }
 
 .search-list {
@@ -667,53 +1193,32 @@ code {
 }
 
 .search-item {
-  margin: 15px 0;
-  padding: 10px;
+  margin: 11px 0;
+  padding: 9px;
   border-left: 3px solid transparent;
-  transition: all 0.15s;
+  transition: all 0.12s;
 }
 
 .search-item:hover {
   border-left-color: $warning-amber;
-  background: rgba(255, 176, 0, 0.05);
-  padding-left: 15px;
+  background: rgba(255, 176, 0, 0.03);
+  padding-left: 14px;
 }
 
 .search-date {
   color: $warning-amber;
-  opacity: 0.7;
-  font-size: 16px;
+  opacity: 0.55;
+  font-size: 15px;
   margin-left: 10px;
 }
 
 /* ========================================
-   TERMINAL EFFECTS (SUBTLE)
+   ANIMATIONS
    ======================================== */
 
 @keyframes blink {
-  0%, 70% { opacity: 1; }
+  0%,  70% { opacity: 1;   }
   71%, 100% { opacity: 0.4; }
-}
-
-/* Very subtle CRT effect */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.05),
-      rgba(0, 0, 0, 0.05) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-  pointer-events: none;
-  z-index: 5;
-  opacity: 0.6;
 }
 
 /* ========================================
@@ -725,38 +1230,47 @@ body::after {
     font-size: 18px;
     padding: 10px;
   }
-  
+
   .terminal-screen {
-    padding: 20px;
+    padding: 18px 18px 22px;
   }
-  
-  .robco-title {
-    font-size: 18px;
+
+  .robco-title      { font-size: 16px; }
+  .system-warning   { font-size: 17px; }
+  .memory-dump      { font-size: 10px; }
+  .header-status    { display: none; }
+
+  .menu-items { gap: 6px; }
+  .menu-item  { font-size: 17px; padding: 6px 10px; }
+
+  .hack-game { grid-template-columns: 1fr; }
+
+  .post-label { width: 90px; font-size: 16px; }
+
+  .post-content       { font-size: 20px; }
+  .post-content p     { font-size: 20px; }
+  .post-content ul li,
+  .post-content ol li { font-size: 19px; }
+  .post-content h1    { font-size: 26px; }
+  .post-content h2    { font-size: 23px; }
+  .post-content h3    { font-size: 20px; }
+
+  .entry-title        { font-size: 22px; }
+  .entry-excerpt      { font-size: 17px; }
+
+  h1 { font-size: 26px; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 20px; }
+
+  .log-header {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
   }
-  
-  .system-warning {
-    font-size: 18px;
-  }
-  
-  .menu-items {
-    gap: 20px;
-  }
-  
-  .menu-item {
-    font-size: 18px;
-    padding: 8px 15px;
-  }
-  
-  .memory-dump {
-    font-size: 12px;
-  }
-  
-  .hack-game {
-    grid-template-columns: 1fr;
-  }
-  
-  .post-label {
-    width: 100px;
-    font-size: 18px;
-  }
+
+  table          { font-size: 15px; }
+  table th,
+  table td       { padding: 6px 10px; }
+
+  .post-nav      { gap: 18px; }
 }
