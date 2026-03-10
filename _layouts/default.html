@@ -1,215 +1,95 @@
 <!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
-    <title>{{ page.title | default: site.title }}</title>
-  </head>
-  <body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <title>{% if page.title %}{{ page.title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
+</head>
+<body>
 
-    <!-- ====== DESKTOP ====== -->
-    <div class="desktop">
+  <!-- ====== HEADER ====== -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-logo" aria-label="{{ site.title }} home">
+        <span class="logo-text">{{ site.title }}</span>
+        <span class="logo-dot">.</span>
+      </a>
 
-      <!-- Desktop Icons -->
-      <div class="desktop-icons">
-        <a href="/" class="desktop-icon">
-          <div class="icon-img">📁</div>
-          <div class="icon-label">My Transmissions</div>
-        </a>
-        <a href="/about" class="desktop-icon">
-          <div class="icon-img">👤</div>
-          <div class="icon-label">Operative Dossier</div>
-        </a>
-        <a href="/projects" class="desktop-icon">
-          <div class="icon-img">🛡️</div>
-          <div class="icon-label">The Armory</div>
-        </a>
-        <a href="/search" class="desktop-icon">
-          <div class="icon-img">🔍</div>
-          <div class="icon-label">Search Database</div>
-        </a>
-        <a href="/hack" class="desktop-icon">
-          <div class="icon-img">🔓</div>
-          <div class="icon-label">Security Override</div>
-        </a>
-        <a href="/" class="desktop-icon" style="margin-top: auto;">
-          <div class="icon-img">🗑️</div>
-          <div class="icon-label">Recycle Bin</div>
-        </a>
-      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/"        class="nav-link {% if page.url == '/' %}nav-active{% endif %}">Writing</a>
+        <a href="/about"   class="nav-link {% if page.url contains '/about' %}nav-active{% endif %}">About</a>
+        <a href="/projects" class="nav-link {% if page.url contains '/projects' %}nav-active{% endif %}">Projects</a>
+        <a href="/search"  class="nav-link {% if page.url contains '/search' %}nav-active{% endif %}">Search</a>
+        <a href="/hack"    class="nav-link nav-special {% if page.url contains '/hack' %}nav-active{% endif %}">Hack</a>
+      </nav>
 
-      <!-- XP Window -->
-      <div class="xp-window">
-        <div class="window-titlebar">
-          <span class="window-title-icon">
-            {% if page.layout == 'post' %}📄{% elsif page.layout == 'terminal' %}🖥️{% elsif page.layout == 'home' %}📁{% else %}📄{% endif %}
-          </span>
-          <span class="window-title-text">{{ page.title | default: site.title }}</span>
-          <div class="window-controls">
-            <button class="win-btn win-minimize" title="Minimize">_</button>
-            <button class="win-btn win-maximize" title="Maximize">□</button>
-            <button class="win-btn win-close" title="Close" onclick="window.location='/'">×</button>
-          </div>
-        </div>
-
-        <div class="window-toolbar">
-          <a href="javascript:history.back()" title="Back">← Back</a>
-          <a href="javascript:history.forward()" title="Forward">→</a>
-          <a href="/" title="Home">🏠</a>
-          <div class="address-bar">
-            <span>Address</span>
-            <div class="address-input">deltron-zero.com{{ page.url }}</div>
-          </div>
-        </div>
-
-        <div class="window-content {% if page.layout == 'terminal' %}terminal-mode{% endif %}">
-          {{ content }}
-        </div>
-
-        <div class="window-statusbar">
-          <span>Done</span>
-          <span>{{ site.title }}</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ====== TASKBAR ====== -->
-    <div class="taskbar">
-      <button class="start-btn" id="start-btn" onclick="toggleStartMenu()">
-        <span class="start-icon">🪟</span>
-        <span class="start-text">start</span>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
-
-      <div class="taskbar-tabs">
-        <div class="taskbar-tab active">
-          {% if page.layout == 'post' %}📄{% elsif page.layout == 'terminal' %}🖥️{% elsif page.layout == 'home' %}📁{% else %}📄{% endif %}
-          {{ page.title | default: site.title | truncate: 22 }}
-        </div>
-      </div>
-
-      <div class="system-tray">
-        <span class="tray-icon" title="Security Center">🛡️</span>
-        <span class="tray-icon" title="Volume">🔊</span>
-        <span class="tray-icon" title="Network">🔌</span>
-        <span class="tray-clock" id="xp-clock">12:00 AM</span>
-      </div>
     </div>
 
-    <!-- ====== START MENU ====== -->
-    <div class="start-menu" id="start-menu">
-      <div class="start-header">
-        <div class="start-avatar">💀</div>
-        <div class="start-username">Deltron Zero</div>
-      </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+      <a href="/"        class="mobile-nav-link">Writing</a>
+      <a href="/about"   class="mobile-nav-link">About</a>
+      <a href="/projects" class="mobile-nav-link">Projects</a>
+      <a href="/search"  class="mobile-nav-link">Search</a>
+      <a href="/hack"    class="mobile-nav-link">Hack</a>
+    </nav>
+  </header>
 
-      <div class="start-body">
-        <div class="start-left">
-          <a href="/" class="start-item">
-            <span class="start-item-icon">📁</span>
-            <span class="start-item-label"><b>My Transmissions</b></span>
-          </a>
-          <a href="/about" class="start-item">
-            <span class="start-item-icon">👤</span>
-            <span class="start-item-label"><b>Operative Dossier</b></span>
-          </a>
-          <div class="start-separator"></div>
-          <a href="/projects" class="start-item">
-            <span class="start-item-icon">🛡️</span>
-            <span class="start-item-label">The Armory</span>
-          </a>
-          <a href="/hack" class="start-item">
-            <span class="start-item-icon">🔓</span>
-            <span class="start-item-label">Security Override</span>
-          </a>
-          <div class="start-separator"></div>
-          <a href="/classified" class="start-item">
-            <span class="start-item-icon">🔒</span>
-            <span class="start-item-label">Classified Files</span>
-          </a>
-          <a href="/admin" class="start-item">
-            <span class="start-item-icon">⚙️</span>
-            <span class="start-item-label">Admin Override</span>
-          </a>
-        </div>
+  <!-- ====== MAIN ====== -->
+  <main class="site-main" id="main-content">
+    {{ content }}
+  </main>
 
-        <div class="start-right">
-          <a href="/search" class="start-item">
-            <span class="start-item-icon">🔍</span>
-            <span class="start-item-label">Search</span>
-          </a>
-          <div class="start-separator"></div>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">📂</span>
-            <span class="start-item-label">My Documents</span>
-          </a>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">💻</span>
-            <span class="start-item-label">My Computer</span>
-          </a>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">🌐</span>
-            <span class="start-item-label">Network Places</span>
-          </a>
-          <div class="start-separator"></div>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">🎛️</span>
-            <span class="start-item-label">Control Panel</span>
-          </a>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">🖨️</span>
-            <span class="start-item-label">Printers and Faxes</span>
-          </a>
-          <a href="/" class="start-item">
-            <span class="start-item-icon">❓</span>
-            <span class="start-item-label">Help and Support</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="start-footer">
-        <button class="start-footer-btn" onclick="alert('See you in the wasteland, operative.')">
-          <span class="start-footer-icon">🔒</span> Log Off
-        </button>
-        <button class="start-footer-btn" onclick="alert('SYSTEM SHUTDOWN INITIATED... Just kidding. This is a website.')">
-          <span class="start-footer-icon">⏻</span> Turn Off Computer
-        </button>
+  <!-- ====== FOOTER ====== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-text">© {{ 'now' | date: "%Y" }} {{ site.title }}. All transmissions logged.</span>
+      <div class="footer-links">
+        <a href="/search" class="footer-link">Search</a>
+        <a href="/about"  class="footer-link">About</a>
+        <a href="/feed.xml" class="footer-link" target="_blank" rel="noopener">RSS</a>
       </div>
     </div>
+  </footer>
 
-    <!-- ====== SCRIPTS ====== -->
-    <script>
-      // Clock
-      function updateClock() {
-        var now = new Date();
-        var h = now.getHours();
-        var m = now.getMinutes();
-        var ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12;
-        if (h === 0) h = 12;
-        var mStr = m < 10 ? '0' + m : m;
-        document.getElementById('xp-clock').textContent = h + ':' + mStr + ' ' + ampm;
+  <!-- ====== SCRIPTS ====== -->
+  <script>
+    // Sticky header scroll detection
+    var header = document.getElementById('site-header');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
       }
-      updateClock();
-      setInterval(updateClock, 30000);
+    }, { passive: true });
 
-      // Start Menu Toggle
-      function toggleStartMenu() {
-        var menu = document.getElementById('start-menu');
-        menu.classList.toggle('open');
-      }
+    // Mobile nav toggle
+    var menuBtn  = document.getElementById('mobile-menu-btn');
+    var mobileNav = document.getElementById('mobile-nav');
+    menuBtn.addEventListener('click', function() {
+      var isOpen = mobileNav.classList.toggle('open');
+      menuBtn.classList.toggle('active', isOpen);
+      menuBtn.setAttribute('aria-expanded', isOpen);
+    });
 
-      // Close start menu when clicking outside
-      document.addEventListener('click', function(e) {
-        var menu = document.getElementById('start-menu');
-        var btn = document.getElementById('start-btn');
-        if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
-          menu.classList.remove('open');
-        }
+    // Close mobile nav when a link is clicked
+    mobileNav.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        mobileNav.classList.remove('open');
+        menuBtn.classList.remove('active');
+        menuBtn.setAttribute('aria-expanded', 'false');
       });
-    </script>
+    });
+  </script>
 
-  </body>
+</body>
 </html>

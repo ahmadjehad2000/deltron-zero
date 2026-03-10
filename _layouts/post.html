@@ -2,40 +2,45 @@
 layout: default
 ---
 
-<div class="post-back">
-  <a href="/">← Back to My Transmissions</a>
-</div>
+<div class="post-page">
+  <div class="post-page-wrapper">
 
-<div class="post-meta-block">
-  <div class="meta-row">
-    <span class="meta-label">Subject:</span>
-    <span class="meta-value">{{ page.title }}</span>
-  </div>
-  <div class="meta-row">
-    <span class="meta-label">Timestamp:</span>
-    <span class="meta-value">{{ page.date | date: "%B %d, %Y at %I:%M %p" }}</span>
-  </div>
-  <div class="meta-row">
-    <span class="meta-label">Status:</span>
-    <span class="meta-value meta-status-active">● Transmission Verified</span>
-  </div>
-  {% if page.categories.size > 0 %}
-  <div class="meta-row">
-    <span class="meta-label">Category:</span>
-    <span class="meta-value">{{ page.categories | join: ", " }}</span>
-  </div>
-  {% endif %}
-  {% if page.tags.size > 0 %}
-  <div class="meta-row">
-    <span class="meta-label">Tags:</span>
-    <span class="meta-value">{{ page.tags | join: " · " }}</span>
-  </div>
-  {% endif %}
-</div>
+    <nav class="post-nav-back">
+      <a href="/" class="back-link">← All Posts</a>
+    </nav>
 
-{{ content }}
+    <header class="post-page-header">
+      <div class="post-page-meta">
+        <time class="post-date-large" datetime="{{ page.date | date_to_xmlschema }}">
+          {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        {% if page.categories.size > 0 %}
+        <span class="post-date-large" style="color:var(--border-strong)">·</span>
+        <span class="post-category">{{ page.categories | first }}</span>
+        {% endif %}
+        {% assign read_time = content | number_of_words | divided_by: 200 | plus: 1 %}
+        <span class="post-date-large" style="color:var(--border-strong)">·</span>
+        <span class="post-category">{{ read_time }} min read</span>
+      </div>
 
-<div class="post-end">
-  — End of Transmission —<br>
-  <a href="/">← Return to My Transmissions</a>
+      <h1 class="post-page-title">{{ page.title }}</h1>
+
+      {% if page.tags.size > 0 %}
+      <div class="post-page-tags">
+        {% for tag in page.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </header>
+
+    <div class="post-body">
+      {{ content }}
+    </div>
+
+    <nav class="post-end-nav">
+      <a href="/" class="back-link">← Back to all posts</a>
+    </nav>
+
+  </div>
 </div>
