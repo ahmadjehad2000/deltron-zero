@@ -2,31 +2,28 @@
 layout: default
 ---
 
+{% assign rt = content | number_of_words | divided_by: 200 | plus: 1 %}
+
 <div class="post-page">
-  <div class="post-page-wrapper">
+  <div class="post-wrap">
 
-    <nav class="post-nav-back">
-      <a href="/" class="back-link">← All Posts</a>
-    </nav>
+    <a href="{{ '/' | relative_url }}" class="back-link">← All posts</a>
 
-    <header class="post-page-header">
-      <div class="post-page-meta">
-        <time class="post-date-large" datetime="{{ page.date | date_to_xmlschema }}">
-          {{ page.date | date: "%B %d, %Y" }}
-        </time>
+    <header class="post-header">
+      <div class="post-meta">
+        <time class="meta-item" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+        <span class="meta-dot">·</span>
+        <span class="meta-item">{{ rt }} min read</span>
         {% if page.categories.size > 0 %}
-        <span class="post-date-large" style="color:var(--border-strong)">·</span>
-        <span class="post-category">{{ page.categories | first }}</span>
+        <span class="meta-dot">·</span>
+        <span class="meta-item">{{ page.categories | first }}</span>
         {% endif %}
-        {% assign read_time = content | number_of_words | divided_by: 200 | plus: 1 %}
-        <span class="post-date-large" style="color:var(--border-strong)">·</span>
-        <span class="post-category">{{ read_time }} min read</span>
       </div>
 
-      <h1 class="post-page-title">{{ page.title }}</h1>
+      <h1 class="post-title">{{ page.title }}</h1>
 
       {% if page.tags.size > 0 %}
-      <div class="post-page-tags">
+      <div class="post-header-tags">
         {% for tag in page.tags %}
         <span class="tag">{{ tag }}</span>
         {% endfor %}
@@ -38,8 +35,8 @@ layout: default
       {{ content }}
     </div>
 
-    <nav class="post-end-nav">
-      <a href="/" class="back-link">← Back to all posts</a>
+    <nav class="post-foot">
+      <a href="{{ '/' | relative_url }}" class="back-link">← Back to all posts</a>
     </nav>
 
   </div>
